@@ -1,4 +1,3 @@
-# ISMISViewer
-[![Build Status](https://travis-ci.org/adrianparvino/ISMISViewer.svg?branch=master)](https://travis-ci.org/adrianparvino/ISMISViewer)
+# reflex-bulma
 
-A simple WebKit application to view [University of San Carlos's ISMIS](http://ismis.usc.edu.ph/)
+[Bulma.css](http://bulma.io/) bindings for the [reflex](https://hackage.haskell.org/package/reflex) library
