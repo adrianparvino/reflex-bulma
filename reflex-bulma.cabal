@@ -1,0 +1,28 @@
+name:                reflex-bulma
+version:             0.1.0.0
+synopsis:            Simple project template from stack
+description:         Please see README.md
+-- homepage:            https://github.com/githubuser/heroku-comment#readme
+license:             GPL-3
+license-file:        LICENSE
+author:              Adrian Parvin D. Ouano
+maintainer:          adrianparvino@gmail.com
+copyright:           2017 Adrian Parvin D. Ouano
+category:            Web
+build-type:          Simple
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5
+                     , containers
+                     , text
+                     , lens
+                     , reflex
+                     , reflex-dom
+                     , reflex-dom-contrib
+                     , font-awesome-type
+  exposed-modules:     Reflex.Bulma
+  other-modules:       Reflex.Bulma.Elements
+                     , Reflex.Bulma.Grid

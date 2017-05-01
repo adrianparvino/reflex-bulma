@@ -17,8 +17,10 @@ addons:
     - libgmp3-dev
 
 script:
-  - stack --no-terminal --skip-ghc-check test
+  - ./build.sh
 
 install:
+  - cd "ISMISViewer"
   - travis_wait stack --no-terminal --skip-ghc-check setup
-  - travis_wait stack --no-terminal --skip-ghc-check test --only-snapshot
+  - cd "../ISMISViewerFrontend"
+  - travis_wait stack --no-terminal --skip-ghc-check setup --no-ghcjs-boot-clean
