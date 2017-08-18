@@ -87,7 +87,7 @@ select :: (Ord a, MonadWidget t m) => [Text] -> a -> Map a Text -> m (Dropdown t
 select classes i = selectDyn classes i . return
 
 checkbox :: MonadWidget t m => [Text] -> Bool -> m (Checkbox t)
-checkbox classes i = Reflex.Dom.Widget.checkbox i (def & checkboxConfig_attributes .~
+checkbox classes i = elClass "label" "checkbox" $ Reflex.Dom.Widget.checkbox i (def & checkboxConfig_attributes .~
                                                     (return $ "class" =: T.unwords ("checkbox":classes)))
 
 -- TODO: radios
