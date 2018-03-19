@@ -99,8 +99,8 @@ button classes s = do
 icon :: (MonadWidget t m) => [Text] -> FontAwesome -> m ()
 icon classes i = elClass "span" (T.unwords $ "icon":classes) $ elClass "i" ("fa " <> fontAwesomeClass i) $ return ()
 
-image :: (MonadWidget t m) => [Text] -> m () -> m ()
-image classes = elClass "figure" (T.unwords $ "image":classes)
+image :: (MonadWidget t m) => [Text] -> Text -> m ()
+image classes location = elClass "figure" (T.unwords $ "image":classes) $ emptyElWith "img" $ ElConfig Nothing $ Map.singleton ("src" :: Text) location
 
 -- TODO: Progress bar
 
