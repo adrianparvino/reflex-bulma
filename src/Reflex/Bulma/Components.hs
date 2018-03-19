@@ -11,13 +11,14 @@ import Data.Monoid
 import Data.Maybe
 import Data.Traversable
 import Control.Monad
+import Control.Lens
   
 import Reflex.Bulma.Elements (icon)
 
 import Web.FontAwesomeType
 
-card :: MonadWidget t m => [T.Text] -> Maybe (T.Text, Maybe FontAwesome) -> m (Dynamic t a) -> [(Maybe T.Text, T.Text, b)] -> m (Event t (a, b))
-card classes header content footers =
+card :: MonadWidget t m => [T.Text] -> Maybe (T.Text, Maybe FontAwesome) -> m (Dynamic t a) -> Dynamic t [(Maybe T.Text, T.Text, b)] -> m (Event t (a, b))
+card classes header content footersE =
   div' "card" classes $ do
     for header $ \(t, i) -> do
       divClass "card-header" $ do
@@ -27,13 +28,13 @@ card classes header content footers =
     x <- divClass "card-content" $ do
       content
 
-    case footers of
+    switchPromptly never =<< (dyn $ footersE <&> (\footers -> case footers of
       [] -> return never
-      xs -> footer "card-footer" . fmap (attachPromptlyDyn x . leftmost) .
-        for xs $ \(url, content, r) -> do
+      xs -> footer "card-footer" . fmap (attachPromptlyDyn x . leftmost) . for xs $
+        \(url, content, r) -> do
           (e, _) <- elAttr' "a" (Map.singleton "class" "card-footer-item" <>
                                  fromMaybe (("href",) <$> url)) . text $ content
           return $ r <$ domEvent Click e
           where
             fromMaybe Nothing = mempty
-            fromMaybe (Just (k, v)) = Map.singleton k v
+            fromMaybe (Just (k, v)) = Map.singleton k v))
