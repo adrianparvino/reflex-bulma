@@ -69,9 +69,10 @@ label :: MonadWidget t m => [Text] -> m a -> m a
 label = elClass "label" . T.unwords
 
 textInput :: MonadWidget t m => [Text] -> Text -> m (TextInput t)
-textInput classes placeholder = Reflex.Dom.textInput (def & textInputConfig_attributes .~
-                                                      (return $ "placeholder" =: placeholder
-                                                             <> "class"       =: T.unwords ("input":classes)))
+textInput classes placeholder = Reflex.Dom.textInput $
+  def & textInputConfig_attributes .~
+  (return $ "placeholder" =: placeholder
+         <> "class"       =: T.unwords ("input":classes))
 
 textArea :: MonadWidget t m => [Text] -> Text -> m (TextArea t)
 textArea classes placeholder = Reflex.Dom.textArea (def & textAreaConfig_attributes .~
