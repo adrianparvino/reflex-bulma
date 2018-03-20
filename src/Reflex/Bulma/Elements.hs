@@ -62,6 +62,10 @@ delete classes = do
 field :: MonadWidget t m => [Text] -> m a -> m a
 field = div' "field"
 
+-- | TODO: Delete this when a better method is found
+control :: MonadWidget t m => [Text] -> m a -> m a
+control = div' "control"
+
 container :: MonadWidget t m => [Text] -> m a -> m a
 container = elClass "container" . T.unwords
 
