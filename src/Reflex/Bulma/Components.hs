@@ -19,29 +19,30 @@ import Reflex.Bulma.Elements (icon)
 
 import Web.FontAwesomeType
 
+type HeaderHandler t m b = (T.Text -> m ()) -> (FontAwesome -> m ()) -> m b
+type FooterHandler t m b = (forall c. c -> T.Text -> m (Event t c))  -> m b
+
 card :: forall t m a. MonadWidget t m
      => [T.Text]
-     -> ((forall b. ((forall c. m c -> m c) -> (forall c. m c -> m c) -> m b) -> m b)
-      -> (forall b. m b                                                       -> m b)
-      -> (forall b. ((forall c. m c -> m c) -> m b)                           -> m b)
-      -> m a)
+     -> ((forall b. HeaderHandler t m b -> m b)
+      -> (forall b.                 m b -> m b)
+      -> (forall b. FooterHandler t m b -> m b) 
+     -> m a) 
      -> m a
 card classes f =
   div' "card" classes $ f header content footer_
   where
-    header :: forall b. ((forall c. m c -> m c) -> (forall c. m c -> m c) -> m b) -> m b
-    header m = divClass "card-header" $ m title icon
+    header :: forall b. ((T.Text -> m ()) -> (FontAwesome -> m ()) -> m b) -> m b
+    header m = divClass "card-header" $ m title icon_
       where
-        title :: forall c. m c -> m c
-        title = p "card-header-title"
-        icon :: forall c. m c -> m c
-        icon  = a "card-header-icon"
+        title = p "card-header-title" . text
+        icon_ = a "card-header-icon" . icon []
 
     content :: forall b. m b -> m b
     content m = divClass "card-content" $ m
 
-    footer_ :: forall b. ((forall c. m c -> m c) -> m b) -> m b
+    footer_ :: forall b. ((forall c. c -> T.Text -> m (Event t c)) -> m b) -> m b
     footer_ m = footer "card-footer" $ m item
      where
-       item :: forall c. m c -> m c
-       item = a "card-footer-item"
+       item :: forall c. c -> T.Text -> m (Event t c)
+       item x t = (\(e, _) -> x <$ domEvent Click e) <$> elAttr' "a" (Map.singleton "class" "card-footer-item") (text t)
