@@ -1,3 +1,5 @@
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TupleSections #-}
 
@@ -17,24 +19,29 @@ import Reflex.Bulma.Elements (icon)
 
 import Web.FontAwesomeType
 
-card :: MonadWidget t m => [T.Text] -> Maybe (T.Text, Maybe FontAwesome) -> m (Dynamic t a) -> Dynamic t [(Maybe T.Text, T.Text, b)] -> m (Event t (a, b))
-card classes header content footersE =
-  div' "card" classes $ do
-    for header $ \(t, i) -> do
-      divClass "card-header" $ do
-        p "card-header-title" . text $ t
-      for i $ a "card-header-icon" . icon []
+card :: forall t m a. MonadWidget t m
+     => [T.Text]
+     -> ((forall b. ((forall c. m c -> m c) -> (forall c. m c -> m c) -> m b) -> m b)
+      -> (forall b. m b                                                       -> m b)
+      -> (forall b. ((forall c. m c -> m c) -> m b)                           -> m b)
+      -> m a)
+     -> m a
+card classes f =
+  div' "card" classes $ f header content footer_
+  where
+    header :: forall b. ((forall c. m c -> m c) -> (forall c. m c -> m c) -> m b) -> m b
+    header m = divClass "card-header" $ m title icon
+      where
+        title :: forall c. m c -> m c
+        title = p "card-header-title"
+        icon :: forall c. m c -> m c
+        icon  = a "card-header-icon"
 
-    x <- divClass "card-content" $ do
-      content
+    content :: forall b. m b -> m b
+    content m = divClass "card-content" $ m
 
-    switchPromptly never =<< (dyn $ footersE <&> (\footers -> case footers of
-      [] -> return never
-      xs -> footer "card-footer" . fmap (attachPromptlyDyn x . leftmost) . for xs $
-        \(url, content, r) -> do
-          (e, _) <- elAttr' "a" (Map.singleton "class" "card-footer-item" <>
-                                 fromMaybe (("href",) <$> url)) . text $ content
-          return $ r <$ domEvent Click e
-          where
-            fromMaybe Nothing = mempty
-            fromMaybe (Just (k, v)) = Map.singleton k v))
+    footer_ :: forall b. ((forall c. m c -> m c) -> m b) -> m b
+    footer_ m = footer "card-footer" $ m item
+     where
+       item :: forall c. m c -> m c
+       item = a "card-footer-item"
