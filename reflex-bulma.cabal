@@ -27,4 +27,4 @@ library
   other-modules:       Reflex.Bulma.Elements
                      , Reflex.Bulma.Grid
                      , Reflex.Bulma.Components
-
+                     , Reflex.Bulma.Internal
