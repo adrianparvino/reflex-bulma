@@ -78,6 +78,13 @@ textInput classes placeholder = Reflex.Dom.textInput $
   (return $ "placeholder" =: placeholder
          <> "class"       =: T.unwords ("input":classes))
 
+passInput :: MonadWidget t m => [Text] -> Text -> m (TextInput t)
+passInput classes placeholder = Reflex.Dom.textInput $
+  def & textInputConfig_attributes .~
+  (return $ "placeholder" =: placeholder
+         <> "type"        =: "password"
+         <> "class"       =: T.unwords ("input":classes))
+
 textArea :: MonadWidget t m => [Text] -> Text -> m (TextArea t)
 textArea classes placeholder = Reflex.Dom.textArea (def & textAreaConfig_attributes .~
                                                     (return $ "placeholder" =: placeholder
